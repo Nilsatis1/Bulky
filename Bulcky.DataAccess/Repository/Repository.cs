@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,14 +20,14 @@ namespace Bulky.DataAccess.Repository
 		{
 			_db = db;
 			this.dbSet = _db.Set<T>();
-			_db.Products.Include(u => u.Category);
+			_db.Products.Include(u => u.Category).Include(u => u.CategoryId);
 		}
 
 		public void Add(T entity)
 		{
 			dbSet.Add(entity);
 		}
-
+		
 		public T Get(System.Linq.Expressions.Expression<Func<T, bool>> filter, string? includeProperties = null)
 		{
 			IQueryable<T> query = dbSet;
@@ -41,7 +42,7 @@ namespace Bulky.DataAccess.Repository
 			}
 			return query.FirstOrDefault();
 		}
-
+		//Category, CoverType
 		public IEnumerable<T> GetAll(string? includeProperties = null)
 		{
 			IQueryable<T> query = dbSet;
