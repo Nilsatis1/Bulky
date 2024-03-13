@@ -42,7 +42,20 @@ namespace BulkyWeb.Areas.Customer.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             ShoppingCart.ApplicationUserId = userId;
 
-            _unitOfWork.ShoppingCart.Add(ShoppingCart);
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId==ShoppingCart.ProductId);
+
+            if (cartFromDb != null) 
+            {
+                //Shopping cart exists
+                cartFromDb.Count += ShoppingCart.Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else
+            {
+                //add cart record
+                _unitOfWork.ShoppingCart.Add(ShoppingCart);
+            }
+            
             _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
